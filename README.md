@@ -1,6 +1,6 @@
 # Infra-Ansible
 
-Infrastructure Automation with Ansible
+Infrastructure Automation with Ansible.
 
 ## Getting Started
 
@@ -22,7 +22,7 @@ With [Vagrant][vagrant], we could:
 - Configure many virtual machines and orchestrate them together
 - Automate the whole life of many virtual machines
 
-Using the GUI (Virtualbox and VMware etc.) to configure virtual machines is just fine. Nonetheless, we still recommend using Vagrant for more thorough automation.
+Using the GUI (VirtualBox, VMware etc.) to configure virtual machines is just fine. Nonetheless, we still recommend using Vagrant for more thorough automation.
 
 ## References
 
