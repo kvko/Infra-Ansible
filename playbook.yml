@@ -1,0 +1,11 @@
+- name: Server provison
+  hosts: kvku
+  vars:
+    server: demo
+
+  vars_files:
+    - vars/user.yml
+
+  roles:
+    - role: packages
+    - role: account

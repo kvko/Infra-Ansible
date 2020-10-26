@@ -1,0 +1,23 @@
+# .bashrc
+#
+# User specific aliases and functions
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias ls='ls -G';
+alias nginx_check="sudo nginx -t"
+alias nginx_restart="sudo service nginx reload"
+alias nginx_stop="sudo service nginx stop"
+alias nginx_start="sudo service nginx start"
+alias vi=vim
+
+parse_git_branch() {
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+
+export PS1="\u@\h \[\033[32m\]\W\[\033[33m\]\[\033[00m\] $ "
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi

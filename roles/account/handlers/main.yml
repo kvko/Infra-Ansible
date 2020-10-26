@@ -1,0 +1,4 @@
+---
+# handlers file for account
+- name: source bashrc
+  shell: . "/home/{{ username }}/.bashrc"
