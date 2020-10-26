@@ -1,11 +1,34 @@
-- name: Server provison
-  hosts: kvku
+- name: Server provison.
+  hosts: kvko
+  gather_facts: false
   vars:
-    server: demo
+    sshport: 10241
+    elapsed: 3
 
   vars_files:
     - vars/user.yml
 
-  roles:
-    - role: packages
-    - role: account
+  tasks:
+    - name: "Test ssh port: {{ sshport }} connectivity."
+      local_action: wait_for port={{ sshport }} timeout={{ elapsed }} host={{ ansible_host }}
+      register: new_ssh
+      failed_when: false
+
+    - name: Initialize server account and openssh port.
+      import_role:
+        name: account
+      when: new_ssh.elapsed >= elapsed
+
+    - name: Trigger restart sshd service immediately.
+      meta: flush_handlers
+
+    - name: Set ansible ssh connection configuration.
+      set_fact:
+        ansible_ssh_port={{ sshport }}
+        ansible_ssh_user={{ username }}
+        ansible_ssh_password={{ password }}
+
+    - name: Install packages.
+      import_role:
+        name: packages
+      become: yes

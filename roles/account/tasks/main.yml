@@ -28,3 +28,23 @@
     src="templates/bashrc.j2"
     dest="/home/{{ username }}/.bashrc"
   notify: source bashrc
+
+- name: Disabled root login
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+  notify: restart ssh
+
+- name: change ssh ports
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: '^#Port'
+    line: 'Port {{ sshport }}'
+  notify: restart ssh
+
+
+
+

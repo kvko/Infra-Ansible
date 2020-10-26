@@ -2,3 +2,6 @@
 # handlers file for account
 - name: source bashrc
   shell: . "/home/{{ username }}/.bashrc"
+
+- name: restart ssh
+  service: name=sshd state=restarted
