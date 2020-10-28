@@ -4,11 +4,13 @@
   vars:
     sshport: 10241
     elapsed: 3
+    gitlab_runner_url: https://gitlab.com
+    gitlab_runner_name: Jane Gitlab Runner For Deployment
 
   vars_files:
     - vars/user.yml
 
-  tasks:
+  pre_tasks:
     - name: "Test ssh port: {{ sshport }} connectivity."
       local_action: wait_for port={{ sshport }} timeout={{ elapsed }} host={{ ansible_host }}
       register: new_ssh
@@ -26,9 +28,22 @@
       set_fact:
         ansible_ssh_port={{ sshport }}
         ansible_ssh_user={{ username }}
-        ansible_ssh_password={{ password }}
+        ansible_ssh_pass={{ password }}
+    - name: Turn on gather facts
+      setup:
 
-    - name: Install packages.
-      import_role:
-        name: packages
+  roles:
+    - role: packages
+      become: yes
+
+    - role: geerlingguy.docker
+      vars:
+        docker_users:
+          - "{{ username }}"
+      become: yes
+
+    - role: nginxinc.nginx
+      become: yes
+
+    - role: jane
       become: yes

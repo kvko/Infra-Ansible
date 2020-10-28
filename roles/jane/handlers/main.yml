@@ -1,0 +1,7 @@
+---
+# handlers file for jane
+- name: restart gitlab_runner
+  service:
+    name: gitlab-runner
+    state: restarted
+
