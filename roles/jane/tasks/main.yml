@@ -1,7 +1,7 @@
 ---
 # tasks file for jane
 #
-- name: Populate service facts
+- name: Populate service facts.
   service_facts:
 
 - name: Install, configure, and register gitlab-runner.
@@ -55,3 +55,18 @@
       groups: docker
       append: yes
   when: "'gitlab-runner.service' not in ansible_facts.services"
+
+- name: Ensure project directory exists.
+  file:
+    path: "/home/gitlab-runner/{{ item['environment'] }}/jane"
+    state: directory
+    recurse: yes
+    owner: gitlab-runner
+    group: gitlab-runner
+  with_items: "{{ stages }}"
+
+- name: Create .env file for deployment.
+  template:
+    src: env.j2
+    dest: "/home/gitlab-runner/{{ item['environment'] }}/jane/.env"
+  with_items: "{{ stages }}"

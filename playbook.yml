@@ -9,6 +9,7 @@
 
   vars_files:
     - vars/user.yml
+    - vars/env.yml
 
   pre_tasks:
     - name: "Test ssh port: {{ sshport }} connectivity."

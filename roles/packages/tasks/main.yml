@@ -3,10 +3,10 @@
 #
 # Update yum source and install common packages
 
-- name: Update yum source
+- name: Update yum source.
   yum: name=* state=latest
 
-- name: Install common packages
+- name: Install common packages.
   yum:
     name: ["tar", "wget", "git", "vim", "telnet", "net-tools"]
     state: installed
