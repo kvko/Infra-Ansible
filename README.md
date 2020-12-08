@@ -2,27 +2,67 @@
 
 Infrastructure Automation with Ansible.
 
-## Getting Started
+This project utilize ansible to provision server environment, and serve as a repository for `Jane` project deployment.
 
-### Useful Ad-Hoc commands
+* User Account Management.
+* Software Dependencies Management.
+* Service Setup and Configuration.
+* Project Deployment.
 
-Grabbed from the book *Ansible for DevOps*
 
-> pending
+## Project layout
+Basic project layout and corresponding functionalities.
 
-### Local testing environment with Vagrant
+```
+.
+├── LICENSE
+├── README.md
+├── ansible.cfg
+├── hosts.ini
+├── playbook.yml
+├── requirements.yml              -- Dependencies
+├── roles                         -- User-Defined Roles Directory
+│   ├── account                   -- User Account Management
+│   ├── certbot                   -- Certbot Functionality
+│   ├── jane                      -- Project Deployment
+│   └── packages                  -- Software Dependencies
+└── vars
+    ├── env.yml                   -- Project Environmental Variables
+    └── user.yml                  -- User Account Credentials
+```  
 
-> Applying Ansible playbooks to production environment without testing it is very dangerous.
+## Get started
 
-[vagrant]: https://www.vagrantup.com/
+### Access the project
+clone project to your local environment.
 
-With [Vagrant][vagrant], we could:
+```
+$ git clone git@github.com:kvko/infra-ansible.git
+```
 
-- Configure a local testing virtual machine in text file (Vagrantfile)
-- Configure many virtual machines and orchestrate them together
-- Automate the whole life of many virtual machines
+### Install roles
+Ansible Galaxy refers to the Galaxy website, a free site for finding, downloading, and sharing community developed roles.
 
-Using the GUI (VirtualBox, VMware etc.) to configure virtual machines is just fine. Nonetheless, we still recommend using Vagrant for more thorough automation.
+
+To install developed roles in Galaxy:
+
+```
+$ cd PROJECT_DIR
+$ ansible-galaxy install -r requirements.yml
+```
+
+### Run the project
+To edit the credential file inside `vars` directory, using the following command.
+
+```
+$ ansible-vault edit vars/user.yml
+```
+
+Run the playbook to provision the server. You will be ask to enter vault password before proceeding.
+
+```
+$ ansible-playbook playbook.yml --ask-vault-pass
+```
 
 ## References
 
