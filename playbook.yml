@@ -2,10 +2,18 @@
   hosts: kvko
   gather_facts: false
   vars:
-    sshport: 10241
+    sshport: 33721
     elapsed: 3
     gitlab_runner_url: https://gitlab.com
     gitlab_runner_name: Jane Gitlab Runner For Deployment
+    certbot_certs:
+      - email: shady@highlight.ink
+        domains:  ["jane.highlight.ink",]
+      - email: shady@highlight.ink
+        domains:  ["highlight.ink",]
+    
+  #certbot_email: shady@highlight.ink
+  #certbot_domains: ["jane.highlight.ink", "highlight.ink"]
 
   vars_files:
     - vars/user.yml
