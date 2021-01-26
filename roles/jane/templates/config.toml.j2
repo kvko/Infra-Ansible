@@ -1,0 +1,9 @@
+concurrent = 1
+check_interval = 0
+
+[[runners]]
+    name = "{{ gitlab_runner_name }}"
+    url = "{{ gitlab_runner_url }}"
+    token = "{{ gitlab_runner_registration.runner.token }}"
+    executor = "shell"
+    [runners.cache]

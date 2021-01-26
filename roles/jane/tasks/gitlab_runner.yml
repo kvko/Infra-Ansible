@@ -1,0 +1,52 @@
+---
+- name: Install, configure, and register gitlab-runner.
+  block:
+  - name: Add GitLab’s official repository.
+    get_url: 
+      url: "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh" 
+      dest: /tmp/gitlab-runner-installer.sh
+      mode: '0777'
+
+  - name: Execute the gitlab-runner-installer.sh.
+    shell: /tmp/gitlab-runner-installer.sh
+
+  - name: Remove the gitlab-runner-installer.sh.
+    file: path=/tmp/gitlab-runner-installer.sh state=absent
+
+  - name: Install gitlab-runner.
+    yum:
+      name: gitlab-runner
+      state: present
+
+  - name: Install python-gitlab dependencies.
+    pip:
+      name: python-gitlab<1.13
+      state: present
+
+  - name: Register gitlab-runner.
+    gitlab_runner:
+      api_url: "{{ gitlab_runner_url }}"
+      api_token: "{{ gitlab_runner_token }}"
+      registration_token: "{{ gitlab_runner_registration_token }}"
+      description: "{{ gitlab_runner_name }}"
+      state: present
+      active: True
+      tag_list: ['web-client']
+      run_untagged: False
+      locked: False
+    register: gitlab_runner_registration
+
+  - name: Create gitlab-runner configuration file.
+    template:
+      src: config.toml.j2
+      dest: /etc/gitlab-runner/config.toml
+      mode: '0600'
+    notify: restart gitlab_runner
+
+  - name: Add gitlab-runner user to docker group
+    user:
+      name: gitlab-runner
+      shell: /bin/bash
+      groups: docker
+      append: yes
+  when: "'gitlab-runner.service' not in ansible_facts.services"

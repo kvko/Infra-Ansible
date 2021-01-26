@@ -1,0 +1,55 @@
+- name: Server provison.
+  hosts: kvko
+  gather_facts: false
+  vars:
+    sshport: 33721
+    elapsed: 3
+    gitlab_runner_url: https://gitlab.com
+    gitlab_runner_name: Jane Gitlab Runner For Deployment
+    certbot_certs:
+      - email: shady@highlight.ink
+        domains:  ["jane.highlight.ink",]
+      - email: shady@highlight.ink
+        domains:  ["highlight.ink",]
+
+  vars_files:
+    - vars/user.yml
+    - vars/env.yml
+
+  pre_tasks:
+    - name: "Test ssh port: {{ sshport }} connectivity."
+      local_action: wait_for port={{ sshport }} timeout={{ elapsed }} host={{ ansible_host }}
+      register: new_ssh
+      failed_when: false
+
+    - name: Initialize server account and openssh port.
+      import_role:
+        name: account
+      when: new_ssh.elapsed >= elapsed
+
+    - name: Trigger restart sshd service immediately.
+      meta: flush_handlers
+
+    - name: Set ansible ssh connection configuration.
+      set_fact:
+        ansible_ssh_port={{ sshport }}
+        ansible_ssh_user={{ username }}
+        ansible_ssh_pass={{ password }}
+    - name: Turn on gather facts
+      setup:
+
+  roles:
+    - role: packages
+      become: yes
+
+    - role: geerlingguy.docker
+      vars:
+        docker_users:
+          - "{{ username }}"
+      become: yes
+
+    - role: nginxinc.nginx
+      become: yes
+
+    - role: jane
+      become: yes

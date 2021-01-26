@@ -1,0 +1,33 @@
+---
+# tasks file for jane
+#
+- name: Populate service facts.
+  service_facts:
+
+- name: Install gitlab-runner service.
+  import_tasks: gitlab_runner.yml
+
+- name: Ensure project directory exists.
+  file:
+    path: "/home/gitlab-runner/{{ item['environment'] }}/jane"
+    state: directory
+    recurse: yes
+    owner: gitlab-runner
+    group: gitlab-runner
+  with_items: "{{ stages }}"
+
+- name: Create .env file for deployment.
+  template:
+    src: env.j2
+    dest: "/home/gitlab-runner/{{ item['environment'] }}/jane/.env"
+  with_items: "{{ stages }}"
+
+- name: Install certbot service.
+  import_tasks: certbot.yml
+
+- name: Create nginx proxy config file for project
+  template:
+    src: nginx.conf.j2
+    dest: "/etc/nginx/conf.d/jane_{{ item['environment'] }}.conf"
+  with_items: "{{ stages }}"
+  notify: restart nginx

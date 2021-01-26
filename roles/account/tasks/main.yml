@@ -1,0 +1,46 @@
+---
+# tasks file for account
+#
+# Create user with sudo permission.
+# Customize user's .bashrc file.
+#
+- name: "Create system user {{ username }}."
+  user:
+    name: "{{ username }}"
+    password: "{{ password | password_hash('sha512') }}"
+    generate_ssh_key: yes
+    ssh_key_bits: 2048
+    ssh_key_file: .ssh/id_rsa
+    state: present
+    shell: /usr/bin/bash
+    update_password: always
+
+- name: Allow user to use sudo.
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%{{ username }}'
+    line: '%{{ username }} ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+
+- name: "Configure {{ username }} ~/.bashrc file."
+  template:
+    src="templates/bashrc.j2"
+    dest="/home/{{ username }}/.bashrc"
+  notify: source bashrc
+
+- name: Disabled root login.
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+  notify: restart ssh
+
+- name: Change ssh ports.
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: '^#Port'
+    line: 'Port {{ sshport }}'
+  notify: restart ssh

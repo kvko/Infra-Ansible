@@ -1,0 +1,12 @@
+---
+# tasks file for packages
+#
+# Update yum source and install common packages
+
+- name: Update yum source.
+  yum: name=* state=latest
+
+- name: Install common packages.
+  yum:
+    name: ["tar", "wget", "git", "vim", "telnet", "net-tools"]
+    state: installed
